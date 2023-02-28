@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet, TextInput, View } from 'react-native';
+import Card from '../components/ui/Card';
+import InfoText from '../components/ui/InfoText';
 import PrimaryButton from '../components/ui/PrimaryButton';
+import Title from '../components/ui/Title';
 import Colors from '../constants/colors';
 
 interface Props {
@@ -21,7 +24,7 @@ const StartScreen = ({ onChoice }: Props) => {
   const confirmInputHandler = () => {
     const number = parseInt(enteredNumber);
     if (isNaN(number) || number <= 0 || number > 99) {
-      Alert.alert('Wrong input', 'It has to be a number between 1 and 99', [
+      Alert.alert('Некорректное значение', 'Выберите число от 1 до 99', [
         { text: 'Ok', style: 'destructive', onPress: resetInputHandler },
       ]);
       return;
@@ -29,44 +32,38 @@ const StartScreen = ({ onChoice }: Props) => {
     onChoice(number);
   };
   return (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.numberInput}
-        keyboardType="number-pad"
-        autoCapitalize="none"
-        autoCorrect={false}
-        maxLength={2}
-        value={enteredNumber}
-        onChangeText={numberInputHandler}
-      />
-      <View style={styles.actions}>
-        <PrimaryButton style={styles.button} onPress={confirmInputHandler}>
-          Ok
-        </PrimaryButton>
-        <PrimaryButton style={styles.button} onPress={confirmInputHandler}>
-          Отмена
-        </PrimaryButton>
-      </View>
+    <View style={styles.rootContainer}>
+      <Title>Отгадай число</Title>
+      <Card>
+        <InfoText>Загадайте число</InfoText>
+        <TextInput
+          style={styles.numberInput}
+          keyboardType="number-pad"
+          autoCapitalize="none"
+          autoCorrect={false}
+          maxLength={2}
+          value={enteredNumber}
+          onChangeText={numberInputHandler}
+        />
+        <View style={styles.actions}>
+          <PrimaryButton style={styles.button} onPress={confirmInputHandler}>
+            Ok
+          </PrimaryButton>
+          <PrimaryButton style={styles.button} onPress={confirmInputHandler}>
+            Отмена
+          </PrimaryButton>
+        </View>
+      </Card>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  rootContainer: {
+    flex: 1,
     marginTop: 100,
-    marginHorizontal: 24,
-    padding: 16,
-    backgroundColor: Colors.primary800,
-    borderRadius: 8,
-    elevation: 4,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    shadowOpacity: 0.25,
+    alignItems: 'center',
   },
-
   numberInput: {
     height: 50,
     width: 50,

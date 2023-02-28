@@ -1,40 +1,80 @@
+import { useCallback, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
 import {
   StyleSheet,
   ImageBackground,
   SafeAreaView,
   Platform,
   StatusBar,
+  View,
 } from 'react-native';
-import StartScreen from './screens/StartScreen';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
-import GameScreen from './screens/GameScreen';
+
 import Colors from './constants/colors';
+
+import StartScreen from './screens/StartScreen';
+import GameScreen from './screens/GameScreen';
+import EndScreen from './screens/EndScreen';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [userNumber, setUserNumber] = useState<number>();
+  const [gameOver, setGameOver] = useState(false);
+  const [rounds, setRounds] = useState<number>();
+
+  const [fontsLoaded] = useFonts({
+    'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   const choiceHandler = (number: number) => {
     setUserNumber(number);
   };
-  let screen = <StartScreen onChoice={choiceHandler} />;
 
-  if (userNumber) {
-    screen = <GameScreen userNumber={userNumber} />;
-  }
+  const gameOverHandler = useCallback((length: number) => {
+    setGameOver(true);
+    setRounds(length);
+  }, []);
+
+  const gameResetHandler = () => {
+    setGameOver(false);
+    setUserNumber(undefined);
+    setRounds(undefined);
+  };
+
+  let screen = gameOver ? (
+    <EndScreen rounds={rounds} number={userNumber} onReset={gameResetHandler} />
+  ) : userNumber === undefined ? (
+    <StartScreen onChoice={choiceHandler} />
+  ) : (
+    <GameScreen userNumber={userNumber} onFinish={gameOverHandler} />
+  );
+
   return (
-    <LinearGradient
-      style={styles.rootScreen}
-      colors={[Colors.primary700, Colors.accent500]}
-    >
-      <ImageBackground
-        source={require('./assets/images/background.png')}
-        resizeMode="cover"
+    <View style={styles.rootScreen} onLayout={onLayoutRootView}>
+      <LinearGradient
         style={styles.rootScreen}
-        imageStyle={styles.backgroundImage}
+        colors={[Colors.primary700, Colors.accent500]}
       >
-        <SafeAreaView style={styles.container}>{screen}</SafeAreaView>
-      </ImageBackground>
-    </LinearGradient>
+        <ImageBackground
+          source={require('./assets/images/background.png')}
+          resizeMode="cover"
+          style={styles.rootScreen}
+          imageStyle={styles.backgroundImage}
+        >
+          <SafeAreaView style={styles.container}>{screen}</SafeAreaView>
+        </ImageBackground>
+      </LinearGradient>
+    </View>
   );
 }
 
