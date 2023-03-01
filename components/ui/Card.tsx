@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Colors from '../../constants/colors';
 
 interface Props {
@@ -10,11 +10,13 @@ const Card = ({ children }: Props) => {
   return <View style={styles.container}>{children}</View>;
 };
 
+const deviceWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 40,
+    marginTop: deviceWidth < 380 ? 20 : 40,
     marginHorizontal: 24,
     padding: 16,
     backgroundColor: Colors.primary800,
@@ -24,6 +26,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     shadowOpacity: 0.25,
+    alignSelf: 'stretch',
   },
 });
 

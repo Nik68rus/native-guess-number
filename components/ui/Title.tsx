@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, Platform } from 'react-native';
 
 interface Props {
   children: React.ReactNode;
@@ -15,9 +15,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-    borderWidth: 2,
+    borderWidth: Platform.OS === 'android' ? 2 : 0,
     borderColor: 'white',
     padding: 12,
+    maxWidth: '80%',
   },
 });
 

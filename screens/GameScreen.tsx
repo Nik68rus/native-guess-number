@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Alert, Text, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  FlatList,
+  useWindowDimensions,
+} from 'react-native';
 import NumberContainer from '../components/game/NumberContainer';
 import Card from '../components/ui/Card';
 import InfoText from '../components/ui/InfoText';
@@ -30,6 +36,7 @@ const GameScreen = ({ userNumber, onFinish }: Props) => {
   const initialValue = generateRandomBetween(1, 100, userNumber);
   const [currentNumber, setCurrentNumber] = useState(initialValue);
   const [history, setHistory] = useState<number[]>([]);
+  const { width, height } = useWindowDimensions();
 
   useEffect(() => {
     if (currentNumber === userNumber) {
@@ -65,9 +72,8 @@ const GameScreen = ({ userNumber, onFinish }: Props) => {
     );
   };
 
-  return (
-    <View style={styles.screen}>
-      <Title>Предположение</Title>
+  let content = (
+    <>
       <NumberContainer number={currentNumber} />
       <Card>
         <View>
@@ -86,13 +92,40 @@ const GameScreen = ({ userNumber, onFinish }: Props) => {
           </View>
         </View>
       </Card>
-      <FlatList
-        data={history}
-        keyExtractor={(item) => item.toString()}
-        renderItem={(number) => (
-          <LogItem round={history.length - number.index} number={number.item} />
-        )}
-      />
+    </>
+  );
+
+  if (width > 500) {
+    content = (
+      <View style={styles.containerWide}>
+        <PrimaryButton onPress={nextNumberHandler.bind(this, Direction.LOWER)}>
+          <Ionicons name="md-remove" size={24} color="white" />
+        </PrimaryButton>
+        <NumberContainer number={currentNumber} />
+
+        <PrimaryButton onPress={nextNumberHandler.bind(this, Direction.GRATER)}>
+          <Ionicons name="md-add" size={24} color="white" />
+        </PrimaryButton>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.screen}>
+      <Title>Предположение</Title>
+      {content}
+      <View style={styles.history}>
+        <FlatList
+          data={history}
+          keyExtractor={(item) => item.toString()}
+          renderItem={(number) => (
+            <LogItem
+              round={history.length - number.index}
+              number={number.item}
+            />
+          )}
+        />
+      </View>
     </View>
   );
 };
@@ -101,6 +134,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: 24,
+    alignItems: 'center',
   },
   buttons: {
     flexDirection: 'row',
@@ -108,6 +142,17 @@ const styles = StyleSheet.create({
   },
   info: {
     marginBottom: 24,
+  },
+  infoWide: {
+    marginBottom: 12,
+  },
+  history: {
+    flex: 1,
+  },
+  containerWide: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

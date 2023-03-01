@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar as ExpoBar } from 'expo-status-bar';
 
 import {
   StyleSheet,
@@ -61,6 +62,7 @@ export default function App() {
 
   return (
     <View style={styles.rootScreen} onLayout={onLayoutRootView}>
+      <ExpoBar style="light" />
       <LinearGradient
         style={styles.rootScreen}
         colors={[Colors.primary700, Colors.accent500]}

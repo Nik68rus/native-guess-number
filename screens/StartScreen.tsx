@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, TextInput, View } from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import Card from '../components/ui/Card';
 import InfoText from '../components/ui/InfoText';
 import PrimaryButton from '../components/ui/PrimaryButton';
@@ -12,6 +20,8 @@ interface Props {
 
 const StartScreen = ({ onChoice }: Props) => {
   const [enteredNumber, setEnteredNumber] = useState('');
+
+  const { width, height } = useWindowDimensions();
 
   const numberInputHandler = (value: string) => {
     setEnteredNumber(value);
@@ -31,34 +41,50 @@ const StartScreen = ({ onChoice }: Props) => {
     }
     onChoice(number);
   };
+
+  const marginTop = height < 400 ? 30 : 100;
+
   return (
-    <View style={styles.rootContainer}>
-      <Title>Отгадай число</Title>
-      <Card>
-        <InfoText>Загадайте число</InfoText>
-        <TextInput
-          style={styles.numberInput}
-          keyboardType="number-pad"
-          autoCapitalize="none"
-          autoCorrect={false}
-          maxLength={2}
-          value={enteredNumber}
-          onChangeText={numberInputHandler}
-        />
-        <View style={styles.actions}>
-          <PrimaryButton style={styles.button} onPress={confirmInputHandler}>
-            Ok
-          </PrimaryButton>
-          <PrimaryButton style={styles.button} onPress={confirmInputHandler}>
-            Отмена
-          </PrimaryButton>
+    <ScrollView style={styles.screen}>
+      <KeyboardAvoidingView style={styles.screen} behavior="position">
+        <View style={[styles.rootContainer, { marginTop }]}>
+          <Title>Отгадай число</Title>
+          <Card>
+            <InfoText>Загадайте число</InfoText>
+            <TextInput
+              style={styles.numberInput}
+              keyboardType="number-pad"
+              autoCapitalize="none"
+              autoCorrect={false}
+              maxLength={2}
+              value={enteredNumber}
+              onChangeText={numberInputHandler}
+            />
+            <View style={styles.actions}>
+              <PrimaryButton
+                style={styles.button}
+                onPress={confirmInputHandler}
+              >
+                Ok
+              </PrimaryButton>
+              <PrimaryButton
+                style={styles.button}
+                onPress={confirmInputHandler}
+              >
+                Отмена
+              </PrimaryButton>
+            </View>
+          </Card>
         </View>
-      </Card>
-    </View>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   rootContainer: {
     flex: 1,
     marginTop: 100,

@@ -1,5 +1,12 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import Title from '../components/ui/Title';
 import Colors from '../constants/colors';
@@ -11,27 +18,53 @@ interface Props {
 }
 
 const EndScreen = ({ rounds, number, onReset }: Props) => {
+  const { width, height } = useWindowDimensions();
+
+  let imageSize = 300;
+  let margin = 36;
+
+  if (width < 380) {
+    imageSize = 150;
+  }
+
+  if (height < 400) {
+    imageSize = 80;
+    margin = 12;
+  }
+
+  const imageStyle = {
+    width: imageSize,
+    height: imageSize,
+    borderRadius: imageSize / 2,
+    margin,
+  };
+
   return (
-    <View style={styles.rootContainer}>
-      <Title>Конец игры!</Title>
-      <View style={styles.imageContainer}>
-        <Image
-          style={styles.image}
-          source={require('../assets/images/success.png')}
-        />
+    <ScrollView style={styles.screen}>
+      <View style={styles.rootContainer}>
+        <Title>Конец игры!</Title>
+        <View style={[styles.imageContainer, imageStyle]}>
+          <Image
+            style={styles.image}
+            source={require('../assets/images/success.png')}
+          />
+        </View>
+        <Text style={styles.summary}>
+          Вы загадали число <Text style={styles.highlight}>{number}</Text>. Мне
+          понадобилось <Text style={styles.highlight}>{rounds}</Text> попыток!
+        </Text>
+        <View>
+          <PrimaryButton onPress={onReset}>Еще раз</PrimaryButton>
+        </View>
       </View>
-      <Text style={styles.summary}>
-        Вы загадали число <Text style={styles.highlight}>{number}</Text>. Мне
-        понадобилось <Text style={styles.highlight}>{rounds}</Text> попыток!
-      </Text>
-      <View>
-        <PrimaryButton onPress={onReset}>Еще раз</PrimaryButton>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   rootContainer: {
     flex: 1,
     padding: 24,
